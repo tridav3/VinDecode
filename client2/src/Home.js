@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { COLORS, FONTS } from "./Styling";
+import VinForm from "./vinForm";
 
 const Home = () => {
   return (
@@ -24,6 +25,7 @@ const Home = () => {
           To decode a VIN number, enter the VIN number and model year in the
           input field below
         </VinInstruct>
+        <VinForm />
       </VinBlurb>
     </Container>
   );

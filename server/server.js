@@ -18,6 +18,7 @@ const listDatabases = async (client) => {
   console.log("Databases:", databaseNames);
   return databaseNames;
 };
+//
 //connecting to the database
 app.get("/", async (req, res) => {
   try {
@@ -39,32 +40,38 @@ app.get("/", async (req, res) => {
     console.log("Connection to MongoDB closed");
   }
 });
+//
+
 //posting vin data to the database
 app.post("/vin", async (req, res) => {
   try {
     await client.connect();
     console.log("Connected to MongoDB");
 
-    const usersCollection = client.db("VinDecode").collection("users");
     const vinCollection = client.db("VinDecode").collection("Vin");
 
-    // Retrieve VIN number and model year
-    const { vin, modelYear, userId } = req.body;
+    // Retrieve the VIN number and model year from the request body
+    const { vin, modelYear } = req.body;
 
-    // Use the VIN decoding, retrieve VIN data from API
+    // Check if the VIN already exists in the database
+    const existingVin = await vinCollection.findOne({
+      SearchCriteria: `VIN(s): ${vin}`,
+      "Results.0": { $exists: true },
+    });
+
+    if (existingVin) {
+      // If the VIN already exists, return a 400 status code and a message
+      return res.status(400).send("VIN already exists in the database");
+    }
+
+    // Use the VIN decoding module to retrieve VIN data from the NHTSA API
     const decodedVIN = await decodeVIN(vin, modelYear);
 
-    // Insert VIN data into  "Vin" collection
-    const result = await vinCollection.insertOne(decodedVIN);
+    // Insert the VIN data into the "Vin" collection
+    await vinCollection.insertOne(decodedVIN);
 
-    // Add the VIN ID to the user's document in the "users"
-    await usersCollection.updateOne(
-      { _id: ObjectId(userId) },
-      { $push: { vins: decodedVIN.SearchCriteria } }
-    );
-
-    // Return the result of the insertion as a JSON object
-    res.json(result);
+    // Return an empty response with a 200 status code
+    res.status(200).send();
   } catch (err) {
     console.error(err);
   } finally {
@@ -73,7 +80,32 @@ app.post("/vin", async (req, res) => {
   }
 });
 
-//
+app.post("/users/:email/vins", async (req, res) => {
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB");
+
+    const usersCollection = client.db("VinDecode").collection("users");
+
+    // Retrieve the user's document by email
+    const user = await usersCollection.findOne({ email: req.params.email });
+
+    // Update the user's document with the new VIN
+    const result = await usersCollection.updateOne(
+      { _id: user._id },
+      { $push: { vins: req.body.vin } }
+    );
+
+    // Return a success message to the client
+    res.json({ message: "Saved VIN to your email!" });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    await client.close();
+    console.log("Connection to MongoDB closed");
+  }
+});
+
 //listening to the port so i can see on insomnia
 app.listen(8000, () => {
   console.log("Server listening on port 8000");
