@@ -5,7 +5,7 @@ import HeaderSignIn from "./HeaderSignIn";
 import GlobalStyle from "./GlobalStyle";
 import Home from "./Home";
 import NavBar from "./NavBar";
-import MyCars from "./myCars";
+
 import Contact from "./contact";
 
 const App = () => {
@@ -17,7 +17,6 @@ const App = () => {
         <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/myCars" element={<MyCars />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </Container>

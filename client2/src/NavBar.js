@@ -7,7 +7,6 @@ const NavBar = () => {
   return (
     <Wrapper>
       <Links to="/">Home</Links>
-      <Links to="/myCars">Garage</Links>
       <Links to="/contact">Contact</Links>
     </Wrapper>
   );

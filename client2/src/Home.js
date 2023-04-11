@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { COLORS, FONTS } from "./Styling";
-import VinForm from "./vinForm";
+import VinForm from "./VinForm";
 
 const Home = () => {
   return (
@@ -34,7 +34,7 @@ const Home = () => {
 export default Home;
 
 const Container = styled.div`
-  height: calc(100vh - 250px);
+  height: 100vh;
   background-color: ${COLORS.MutedGreen};
 `;
 

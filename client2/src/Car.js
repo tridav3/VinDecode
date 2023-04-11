@@ -1,7 +1,12 @@
 import React from "react";
 import styled from "styled-components";
+import { COLORS } from "./Styling";
 
-const Car = ({ decodedVIN }) => {
+const Car = ({ decodedVin }) => {
+  if (!decodedVin) {
+    return <p>No car details found.</p>;
+  }
+
   const {
     VIN,
     Make,
@@ -13,7 +18,7 @@ const Car = ({ decodedVIN }) => {
     FuelTypePrimary,
     Trim,
     PlantCountry,
-  } = decodedVIN.Results[0];
+  } = decodedVin.Results[0];
 
   return (
     <CarContainer>
@@ -34,9 +39,9 @@ const Car = ({ decodedVIN }) => {
 export default Car;
 
 const CarContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  min-height: calc(100vh - 250px);
+  background-color: ${COLORS.MutedGreen};
+  overflow-y: auto;
 `;
 
 const CarDetailItem = styled.div`
