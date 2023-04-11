@@ -1,11 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { COLORS } from "./Styling";
+import { COLORS, Button } from "./Styling";
 
 const Car = ({ decodedVin }) => {
   if (!decodedVin) {
     return <p>No car details found.</p>;
   }
+  const _id = decodedVin._id;
+  console.log(_id);
 
   const {
     VIN,
@@ -20,6 +22,22 @@ const Car = ({ decodedVin }) => {
     PlantCountry,
   } = decodedVin.Results[0];
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/vin/${_id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        console.log(`VIN ${VIN} deleted`);
+        window.location.reload();
+      } else {
+        console.log(`Error deleting VIN ${VIN}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <CarContainer>
       <CarDetailItem>VIN: {VIN}</CarDetailItem>
@@ -32,6 +50,7 @@ const Car = ({ decodedVin }) => {
       <CarDetailItem>Fuel Type: {FuelTypePrimary}</CarDetailItem>
       <CarDetailItem>Trim: {Trim}</CarDetailItem>
       <CarDetailItem>Country of Origin: {PlantCountry}</CarDetailItem>
+      <Button onClick={handleDelete}>Delete</Button>
     </CarContainer>
   );
 };
@@ -39,9 +58,10 @@ const Car = ({ decodedVin }) => {
 export default Car;
 
 const CarContainer = styled.div`
-  min-height: calc(100vh - 250px);
   background-color: ${COLORS.MutedGreen};
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 `;
 
 const CarDetailItem = styled.div`

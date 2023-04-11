@@ -21,10 +21,7 @@ const Home = () => {
           an important tool for identifying and verifying the authenticity of a
           vehicle.
         </VinP>
-        <VinInstruct>
-          To decode a VIN number, enter the VIN number and model year in the
-          input field below
-        </VinInstruct>
+
         <VinForm />
       </VinBlurb>
     </Container>
@@ -69,10 +66,5 @@ const VinP = styled.p`
   margin-bottom: 10px;
   line-height: 1.5;
   text-align: justify;
-  font-family: ${FONTS.default};
-`;
-
-const VinInstruct = styled.p`
-  text-align: center;
   font-family: ${FONTS.default};
 `;

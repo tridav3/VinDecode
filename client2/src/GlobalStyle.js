@@ -1,4 +1,5 @@
 import { createGlobalStyle } from "styled-components";
+import { COLORS } from "./Styling";
 
 export default createGlobalStyle`
   :root {
@@ -27,6 +28,7 @@ export default createGlobalStyle`
   body {
     line-height: 1;
     font-family: sans-serif;
+    background-color: ${COLORS.MutedGreen};
   }
 
   /* HTML5 display-role reset for older browsers */

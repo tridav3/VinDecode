@@ -3,6 +3,7 @@ const app = express();
 const { decodeVIN } = require("./VinDecode");
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
+const { ObjectId } = require("mongodb");
 
 const client = new MongoClient(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -41,13 +42,18 @@ app.get("/", async (req, res) => {
     console.log("Connection to MongoDB closed");
   }
 });
-//get vin from vin collection
-app.get("/vin/:vin/:modelYear", async (req, res) => {
-  const { vin, modelYear } = req.params;
 
+//get vin from vin collection
+app.get("/vin", async (req, res) => {
   try {
-    const vinData = await decodeVIN(vin, modelYear);
-    res.json(vinData);
+    await client.connect();
+
+    const vinData = await client
+      .db("VinDecode")
+      .collection("Vin")
+      .find({})
+      .toArray();
+    res.json({ vinData });
   } catch (error) {
     console.error("Error fetching VIN data:", error);
     res.status(500).json({ error: "Error fetching VIN data" });
@@ -154,17 +160,28 @@ app.post("/users/vins", async (req, res) => {
   }
 });
 
-// // decode
-// app.post("/decode", async (req, res) => {
-//   try {
-//     const { vin, modelYear } = req.body;
-//     const decodedVIN = await decodeVIN(vin, modelYear);
-//     res.status(200).json(decodedVIN);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
+//delete vin from vin collection
+app.delete("/vin/:_id", async (req, res) => {
+  try {
+    await client.connect();
+
+    const vinCollection = client.db("VinDecode").collection("Vin");
+    const { _id } = req.params;
+
+    const result = await vinCollection.deleteOne({ _id: new ObjectId(_id) });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "VIN not found" });
+    }
+
+    res.json({ message: "VIN deleted" });
+  } catch (error) {
+    console.error("Error deleting VIN:", error);
+    res.status(500).json({ error: "Error deleting VIN" });
+  } finally {
+    await client.close();
+  }
+});
 
 //listening to the port so i can see on insomnia
 app.listen(8000, () => {

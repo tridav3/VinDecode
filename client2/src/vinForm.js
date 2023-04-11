@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Button, COLORS } from "./Styling";
+import { Button, COLORS, FONTS } from "./Styling";
 import { useAuth0 } from "@auth0/auth0-react";
 import Car from "./Car";
 import MyCars from "./myCars";
@@ -27,7 +27,6 @@ const VinForm = ({ onSubmit, email }) => {
           const decoded = text ? JSON.parse(text) : null;
           setDecodedVin(decoded.decode);
 
-          // Make a separate fetch request to add the VIN to the user's vins array
           const token = localStorage.getItem("token");
           const response2 = await fetch("/users/vins", {
             method: "POST",
@@ -39,6 +38,7 @@ const VinForm = ({ onSubmit, email }) => {
           });
           if (response2.ok) {
             console.log("VIN added to user's vins array");
+            window.location.reload();
           } else {
             console.log("Failed to add VIN to user's vins array");
           }
@@ -56,7 +56,11 @@ const VinForm = ({ onSubmit, email }) => {
 
   return (
     <Wrapper>
-      <MyCars />
+      <MyCars decodedVin={decodedVin} />
+      <VinInstruct>
+        To decode a VIN number, enter the VIN number and model year in the input
+        field below
+      </VinInstruct>
       <Container>
         <Form onSubmit={handleSubmit}>
           <Input1
@@ -76,9 +80,9 @@ const VinForm = ({ onSubmit, email }) => {
             <div>Error: {decodedVin.error}</div>
           )}
           {decodedVin !== null && !decodedVin.error && (
-            <Form>
+            <Contain>
               <Car decodedVin={decodedVin} />
-            </Form>
+            </Contain>
           )}
         </Form>
       </Container>
@@ -95,6 +99,7 @@ const Container = styled.div`
   background-color: ${COLORS.MutedGreen};
   overflow-y: auto;
   height: 100%;
+  width: 100%;
 `;
 
 const Form = styled.form`
@@ -112,5 +117,10 @@ const Input2 = styled.input`
 `;
 
 const Wrapper = styled.div``;
+const VinInstruct = styled.p`
+  text-align: center;
+  font-family: ${FONTS.default};
+`;
+const Contain = styled.div``;
 
 // const DecodedVin = styled.div``;
