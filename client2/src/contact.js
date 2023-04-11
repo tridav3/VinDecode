@@ -14,16 +14,16 @@ const Contact = () => {
           </ContactDetailItem>
           <ContactDetailItem>
             Phone:
-            <span onClick={() => (window.location.href = "tel:123-456-7890")}>
+            <Span1 onClick={() => (window.location.href = "tel:123-456-7890")}>
               (123) 456-7890
-            </span>
+            </Span1>
           </ContactDetailItem>
 
           <ContactDetailItem>
             Address:
             <Address>
-              <div>Harvey Ave</div>
-              <div>Kelowna, BC, V1W1L4</div>
+              <Place>Harvey Ave</Place>
+              <Place>Kelowna, BC, V1W1L4</Place>
             </Address>
           </ContactDetailItem>
         </ContactDetails>
@@ -157,3 +157,7 @@ const FormTextarea = styled.textarea`
   }
 `;
 const FormButton = styled(Button)``;
+
+const Span1 = styled.span``;
+
+const Place = styled.span``;

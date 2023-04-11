@@ -29,4 +29,3 @@ export default App;
 const Container = styled.div`
   width: 100%;
 `;
-///help stuck in github

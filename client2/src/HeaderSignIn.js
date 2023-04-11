@@ -13,11 +13,9 @@ const HeaderSignIn = () => {
 
   return (
     <HeaderWrap>
-      {/* // website header  */}
       <WebsiteTitle>
         <NameOfSite>David's Vin Decoder</NameOfSite>
       </WebsiteTitle>
-      {/* // login button */}
       <SignInBox>
         <Auth>Use your socials to</Auth>
         {error && <Auth>Authentication Error</Auth>}
@@ -29,7 +27,6 @@ const HeaderSignIn = () => {
           </>
         )}
       </SignInBox>
-      {/* // sign in form */}
       <SignUpWrapper></SignUpWrapper>
     </HeaderWrap>
   );

@@ -4,14 +4,13 @@ const { decodeVIN } = require("./VinDecode");
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
 const { ObjectId } = require("mongodb");
+const jwt = require("jsonwebtoken");
+app.use(express.json());
 
 const client = new MongoClient(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-const jwt = require("jsonwebtoken");
-
-app.use(express.json());
 
 //list of databases
 const listDatabases = async (client) => {
@@ -20,7 +19,7 @@ const listDatabases = async (client) => {
   console.log("Databases:", databaseNames);
   return databaseNames;
 };
-//
+
 //connecting to the database
 app.get("/", async (req, res) => {
   try {
@@ -69,28 +68,21 @@ app.post("/vin", async (req, res) => {
     const vinCollection = client.db("VinDecode").collection("Vin");
     const usersCollection = client.db("VinDecode").collection("users");
 
-    // Retrieve the VIN number and model year from the request body
     const { vin, modelYear, email } = req.body;
 
-    // Check if the VIN already exists in the database
     const existingVin = await vinCollection.findOne({
       SearchCriteria: `VIN(s): ${vin}`,
       "Results.0": { $exists: true },
     });
 
     if (existingVin) {
-      // If the VIN already exists, return a 400 status code and a message
       return res.status(400).send("VIN already exists in the database");
     }
 
-    // Use the VIN decoding module to retrieve VIN data from the NHTSA API
     const decodedVIN = await decodeVIN(vin, modelYear);
 
-    // Insert the VIN data into the "Vin" collection
     await vinCollection.insertOne(decodedVIN);
 
-    // Update the user's document with the new VIN
-    // Update the user's document with the new VIN
     const result = await usersCollection.updateOne(
       { email },
       {
@@ -103,7 +95,7 @@ app.post("/vin", async (req, res) => {
     );
 
     const token = jwt.sign({ vin }, "secretKey");
-    // Return an empty response with a 200 status code
+
     res
       .cookie("token", token, {
         httpOnly: true,
@@ -122,38 +114,23 @@ app.post("/vin", async (req, res) => {
 });
 
 app.post("/users/vins", async (req, res) => {
+  const { vin, email } = req.body;
+
   try {
-    const { vin, email } = req.body;
-    console.log(req.body);
-    // const token =
-    //   req.headers.Authorization && req.headers.Authorization.split(" ")[1];
-
-    // if (!token) {
-    //   return res.status(401).json({ message: "Unauthorized" });
-    // }
-
-    // const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    // const email = decodedToken.email;
-
     await client.connect();
     console.log("Connected to MongoDB");
 
     const usersCollection = client.db("VinDecode").collection("users");
 
-    // Retrieve the user
-    const user = await usersCollection.findOne({ email });
-
-    // Update the user
     const result = await usersCollection.updateOne(
-      { email: user.email },
-      { $addToSet: { vins: req.body.vin } }
+      { email },
+      { $addToSet: { vins: vin } }
     );
 
-    // Return success
     res.json({ message: "Saved VIN to your email!" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error) {
+    console.error("Error saving VIN to user:", error);
+    res.status(500).json({ error: "Error saving VIN to user" });
   } finally {
     await client.close();
     console.log("Connection to MongoDB closed");

@@ -6,22 +6,20 @@ import VinForm from "./VinForm";
 const Home = () => {
   return (
     <Container>
-      <Header>Let's Decode Your Vehicle</Header>
+      <Header>Login to Decode Your Vin!!</Header>
       <VinBlurb>
         <VinHeader>What is a VIN number and what can we do with it?</VinHeader>
         <VinP>
-          Decode Vin is a web application that enables users to decode the VIN
-          numbers of vehicles. The VIN number is a 17-digit identifier that is
-          unique to each vehicle, containing information about the make, model,
-          engine displacement in liters, engine cylinders, engine horsepower,
-          gross vehicle weight, fuel type, trim, and country of origin. The VIN
-          number can be found in multiple locations on the vehicle, including on
-          the frame, door placard, windshield, and on the registration and
-          insurance documents. It is used to track the vehicle's history and is
-          an important tool for identifying and verifying the authenticity of a
-          vehicle.
+          Decode Vin is a website that lets you decode the 17-digit VIN number
+          of any vehicle, revealing all sorts of useful information like the
+          car's make, model, engine size, and more. It's like having a backstage
+          pass to the world of cars, without having to wear a laminated badge.
+          The VIN number can be found in many places, like a secret agent hiding
+          in plain sight - on the frame, door placard, windshield, and even on
+          your vehicle's registration and insurance documents. It's an essential
+          tool for anyone who wants to know their car's history, impress their
+          friends with their automotive expertise
         </VinP>
-
         <VinForm />
       </VinBlurb>
     </Container>

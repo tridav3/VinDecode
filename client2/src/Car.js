@@ -7,7 +7,6 @@ const Car = ({ decodedVin }) => {
     return <p>No car details found.</p>;
   }
   const _id = decodedVin._id;
-  console.log(_id);
 
   const {
     VIN,
